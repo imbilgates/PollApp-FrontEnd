@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     axios
-      .get('https://pollapp-dk9u.onrender.com/user-info', { withCredentials: true })
+      .get('/user-info', { withCredentials: true })
       .then((res) => {
         setIsAuthenticated(true)
         console.log(res.data);
