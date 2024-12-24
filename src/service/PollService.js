@@ -3,9 +3,9 @@ import axios from "axios"
 
 export const listPolls  = () => axios.get("/api/polls");
 
-export const createPoll  = (poll) => axios.post(poll, {withCredentials: true});
+export const createPoll  = (poll) => axios.post("/api/polls", poll, {withCredentials: true});
 
-export const votePoll  = (vote) => axios.post('/vote', vote);
+export const votePoll  = (vote) => axios.post('/api/polls/vote', vote);
 
 export const getPollById  = (poll_id) => axios.get('/', poll_id);
 

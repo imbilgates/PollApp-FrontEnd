@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import CreatePoll from "./component/CreatePoll";
 import ListOfPolls from "./component/ListOfPolls";
 import Home from "./Pages/Home";
@@ -10,16 +10,14 @@ import Button from "./component/Button";
 import axios from "axios";
 
 function App() {
-  const { isAuthenticated } = useContext(AuthContext);
-
+  
   axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 
 
   return (
     <Routes>
-      <Route path="/" element={!isAuthenticated ? <Home /> : <Navigate to="/polls" />} />
-      
-      <Route path="/polls" element={<PrivateRoute isAuthenticated={isAuthenticated} redirectTo="/" />}>
+      <Route path="/" element={<Home />} />
+      <Route path="/polls" element={<PrivateRoute />}>
         <Route index element={
           <>
             <CreatePoll />
@@ -27,16 +25,14 @@ function App() {
           </>
         } />
       </Route>
-
-      <Route path="/user" element={isAuthenticated ? <UserLayout /> :  <Navigate to="/" /> } />
+      <Route path="/user" element={<UserLayout />} />
     </Routes>
   );
 }
-
 export default App;
 
-const PrivateRoute = ({ isAuthenticated, redirectTo }) => {
-  return isAuthenticated ? <PollsLayout /> : <Navigate to={redirectTo} />;
+const PrivateRoute = () => {
+  return <PollsLayout />;
 };
 
 const MainLayout = ({ children }) => (

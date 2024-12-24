@@ -4,26 +4,26 @@ import axios from 'axios';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    axios
-      .get('/user-info', { withCredentials: true })
-      .then((res) => {
-        setIsAuthenticated(true)
-        console.log(res.data);
-      })
-      .catch(() => setIsAuthenticated(false));
+    useEffect(() => {
+        axios
+            .get('/user-info', { withCredentials: true })
+            .then((response) => {
+                setIsAuthenticated(true);
+                setUser(response.data);
+                console.log(isAuthenticated);
+            })
+            .catch((error) => {
+                setIsAuthenticated(false);
+                setUser(null);
+            });
+    }, []);
 
-    console.log(isAuthenticated);
-  }, [isAuthenticated]);
-
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, user, setIsAuthenticated }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
-
-export default AuthProvider;

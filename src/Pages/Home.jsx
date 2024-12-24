@@ -1,16 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { FaGoogle, FaGithub } from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContex';
-import { redirect } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-
-    const { isAuthenticated } = useContext(AuthContext);
-
-    if (!isAuthenticated) {
-        redirect("/polls");
-    }
 
 
     const googleLogin = () => {
@@ -20,7 +13,6 @@ const Home = () => {
     const githubLogin = () => {
         window.location.href = process.env.REACT_APP_API_BASE_URL + '/oauth2/authorization/github';
     };
-
 
     return (
         <div style={styles.container}>
