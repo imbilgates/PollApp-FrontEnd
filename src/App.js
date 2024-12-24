@@ -14,6 +14,7 @@ function App() {
 
   axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 
+
   return (
     <Routes>
       <Route path="/" element={!isAuthenticated ? <Home /> : <Navigate to="/polls" />} />
