@@ -29,7 +29,7 @@ const Nav = () => {
 
     useEffect(() => {
         axios
-            .get('/user-details', { withCredentials: true })
+            .get('/user-info', { withCredentials: true })
             .then((response) => {
                 setUser(response.data);
             })
@@ -59,11 +59,11 @@ const Nav = () => {
                 {user ? (
                     <>
                         <span style={styles.userName}>
-                            {user.name || user.username}
+                            {user.name || 'Guest'}
                         </span>
                         <img
                             style={styles.userImage}
-                            src={user.picture || user.userPicture || 'https://via.placeholder.com/35'}
+                            src={user.picture || user.avatar_url || 'https://via.placeholder.com/35'}
                             alt="User"
                         />
                         <button onClick={handleLogout} style={styles.logoutButton}>
