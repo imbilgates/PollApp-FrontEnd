@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
       .catch(() => setIsAuthenticated(false));
 
     console.log(isAuthenticated);
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>

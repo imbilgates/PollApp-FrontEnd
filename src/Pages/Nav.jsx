@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContex';
 const Nav = () => {
 
@@ -10,7 +9,6 @@ const Nav = () => {
     const [user, setUser] = useState(null);
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
