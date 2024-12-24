@@ -1,7 +1,5 @@
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import { FaGoogle, FaGithub } from 'react-icons/fa';
-import { AuthContext } from '../context/AuthContex';
-import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
 

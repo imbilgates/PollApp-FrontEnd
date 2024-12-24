@@ -1,16 +1,15 @@
-import React, { useContext, useEffect } from "react";
-import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
+import React from "react";
+import { Outlet, Route, Routes } from "react-router-dom";
 import CreatePoll from "./component/CreatePoll";
 import ListOfPolls from "./component/ListOfPolls";
 import Home from "./Pages/Home";
 import Nav from "./Pages/Nav";
-import { AuthContext } from './context/AuthContex';
 import UserPages from "./component/UserPage";
 import Button from "./component/Button";
 import axios from "axios";
 
 function App() {
-  
+
   axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 
 
