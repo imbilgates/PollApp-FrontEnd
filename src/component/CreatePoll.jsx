@@ -4,7 +4,7 @@ import { usePollContext } from '../context/PollContext';
 
 const CreatePoll = () => {
 
-  const { question, setQuestion, options, setOptions, polls, setPolls } = usePollContext(); // Add setPolls to update polls
+  const { question, setQuestion, options, setOptions, setPolls } = usePollContext(); // Add setPolls to update polls
 
   const handleQuestionChange = (e) => {
     setQuestion(e.target.value);
