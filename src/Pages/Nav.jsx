@@ -3,10 +3,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContex';
 const Nav = () => {
 
-    const { setIsAuthenticated } = useContext(AuthContext);
+    const { setIsAuthenticated, user } = useContext(AuthContext);
 
-
-    const [user, setUser] = useState(null);
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -27,21 +25,10 @@ const Nav = () => {
         };
     }, [lastScrollY]);
 
-    useEffect(() => {
-        axios
-            .get('/user-info', { withCredentials: true })
-            .then((response) => {
-                setUser(response.data);
-            })
-            .catch((err) => {
-                console.error('Failed to fetch user data:', err);
-                setUser({ username: 'Guest' });
-            });
-    }, []);
 
     const handleLogout = () => {
-        window.location.href = process.env.REACT_APP_API_BASE_URL + "/logout";
         setIsAuthenticated(false)
+        window.location.href = process.env.REACT_APP_API_BASE_URL + "/logout";
     }
 
 
@@ -59,11 +46,11 @@ const Nav = () => {
                 {user ? (
                     <>
                         <span style={styles.userName}>
-                            {user.name || 'Guest'}
+                            {user?.name || 'Guest'}
                         </span>
                         <img
                             style={styles.userImage}
-                            src={user.picture || user.avatar_url || 'https://via.placeholder.com/35'}
+                            src={user?.picture || user?.avatar_url || 'https://via.placeholder.com/35'}
                             alt="User"
                         />
                         <button onClick={handleLogout} style={styles.logoutButton}>

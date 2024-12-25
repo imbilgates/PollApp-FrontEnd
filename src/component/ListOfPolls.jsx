@@ -13,7 +13,7 @@ const ListOfPolls = () => {
                 setPolls(poll.data);
             })
             .catch(err => console.log(err));
-    }, [setPolls, polls]);
+    }, [setPolls]);
 
     const handleVotes = (pollId, pollIndex) => {
 
@@ -43,7 +43,7 @@ const ListOfPolls = () => {
 
 
     if (!Array.isArray(polls)) {
-        return <p>Loading...</p>; // Show loading if polls is not an array
+        return <p>Loading...</p>; 
     }
 
     return (
