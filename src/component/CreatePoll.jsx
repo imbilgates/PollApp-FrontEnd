@@ -38,9 +38,9 @@ const CreatePoll = () => {
     createPoll(pollData)
       .then((newPoll) => {
         console.log('Poll created successfully');
-        setPolls([newPoll, ...polls]); // Update the state with the new poll
-        setQuestion(''); // Clear the question input field
-        setOptions(['', '']); // Clear the options input fields
+        setPolls((prevPolls) => [newPoll.data, ...prevPolls]);
+        setQuestion(''); 
+        setOptions(['', '']); 
       })
       .catch((err) => console.log('Error creating poll:', err));
   };
