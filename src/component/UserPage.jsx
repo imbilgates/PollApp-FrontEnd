@@ -7,7 +7,6 @@ const UserPages = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-
     useEffect(() => {
         getAllPollsByEmail()
             .then((response) => {
@@ -51,6 +50,7 @@ const UserPages = () => {
                                 <tr>
                                     <th scope="col">Poll Question</th>
                                     <th scope="col">Options</th>
+                                    <th scope="col">Voters</th> {/* New column for voters */}
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
@@ -73,6 +73,24 @@ const UserPages = () => {
                                             </ul>
                                         </td>
                                         <td>
+                                            <div className="d-flex">
+                                                {poll.options?.map((option, index) => (
+                                                    <div key={index} className="me-3">
+                                                        <strong>{option.voteOption}:</strong>
+                                                        <ul className="list-unstyled">
+                                                            {option.voters?.length > 0 ? (
+                                                                option.voters?.map((voter, idx) => (
+                                                                    <li className='me-2 text-primary' key={idx}>{voter}</li>
+                                                                ))
+                                                            ) : (
+                                                                <li>No voters</li>
+                                                            )}
+                                                        </ul>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </td>
+                                        <td>
                                             <button
                                                 className="btn btn-danger"
                                                 onClick={() => handleDelete(poll.id)}
@@ -87,12 +105,10 @@ const UserPages = () => {
                     </div>
                 </>
             ) : (
-                <p className='text text-center'>You Have No polls available</p>
+                <p className="text-center">You Have No polls available</p>
             )}
         </div>
     );
 };
 
 export default UserPages;
-
-

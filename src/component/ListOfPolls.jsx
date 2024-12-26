@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { listPolls, votePoll } from '../service/PollService';
 import { usePollContext } from '../context/PollContext';
 import { formatTimeRelative } from '../Utils/formatTimeRelative';
+import { AuthContext } from '../context/AuthContex';
 
 const ListOfPolls = () => {
     const { polls, setPolls } = usePollContext();
     const [sortOption, setSortOption] = useState('newest');
     const [loading, setLoading] = useState(true);
+    const [votingPolls, setVotingPolls] = useState(new Set());
+
+    const { user } = useContext(AuthContext);
 
     useEffect(() => {
         listPolls()
@@ -20,15 +24,26 @@ const ListOfPolls = () => {
             });
     }, [setPolls]);
 
-    const handleVotes = (pollId, pollIndex) => {
-        const vote = { pollId, optionIndex: pollIndex };
+    const handleVotes = (pollId, optionIndex, username) => {
+        if (votingPolls.has(pollId)) return;
+
+        setVotingPolls(prev => new Set(prev).add(pollId));
+
+        const vote = { pollId, optionIndex, username };
         votePoll(vote)
             .then(() => {
                 const updatedPolls = polls.map(poll => {
                     if (poll.id === pollId) {
                         const updatedOptions = poll.options.map((option, index) => {
-                            if (index === pollIndex) {
-                                return { ...option, voteCount: option.voteCount + 1 };
+                            if (index === optionIndex) {
+                                const isVoted = option.voters && option.voters.includes(username);
+                                return {
+                                    ...option,
+                                    voteCount: isVoted ? option.voteCount - 1 : option.voteCount + 1,
+                                    voters: isVoted
+                                        ? option.voters.filter(voter => voter !== username)
+                                        : [...option.voters, username],
+                                };
                             }
                             return option;
                         });
@@ -37,6 +52,11 @@ const ListOfPolls = () => {
                     return poll;
                 });
                 setPolls(updatedPolls);
+                setVotingPolls(prev => {
+                    const newSet = new Set(prev);
+                    newSet.delete(pollId);
+                    return newSet;
+                });
             })
             .catch(err => console.log(err));
     };
@@ -48,8 +68,7 @@ const ListOfPolls = () => {
             case 'oldest':
                 return new Date(a.createdAt) - new Date(b.createdAt);
             case 'popular':
-                return b.options.reduce((sum, o) => sum + o.voteCount, 0) -
-                       a.options.reduce((sum, o) => sum + o.voteCount, 0);
+                return b.options.reduce((sum, o) => sum + o.voteCount, 0) - a.options.reduce((sum, o) => sum + o.voteCount, 0);
             default:
                 return 0;
         }
@@ -66,6 +85,7 @@ const ListOfPolls = () => {
     if (!Array.isArray(polls)) {
         return <p>Loading...</p>;
     }
+
 
     return (
         <div className="container mt-4">
@@ -101,20 +121,27 @@ const ListOfPolls = () => {
                         <div className="card-body">
                             <h3 className="card-title">{poll.question}</h3>
                             <ul className="list-group">
-                                {poll.options?.map((option, index) => (
-                                    <li
-                                        key={index}
-                                        className="list-group-item d-flex justify-content-between align-items-center"
-                                    >
-                                        <span>{option?.voteOption}</span>
-                                        <button
-                                            className="btn btn-outline-primary btn-sm"
-                                            onClick={() => handleVotes(poll.id, index)}
+                                {poll.options?.map((option, index) => {
+                                    const isVoted = option.voters?.includes(user?.name);
+                                    return (
+                                        <li
+                                            key={index}
+                                            className="list-group-item d-flex justify-content-between align-items-center"
                                         >
-                                            Votes ({option?.voteCount})
-                                        </button>
-                                    </li>
-                                ))}
+                                            <span>{option?.voteOption}</span>
+                                            <button
+                                                className={`btn btn-outline-primary btn-sm ${isVoted ? 'btn-danger' : ''}`}
+                                                onClick={() => handleVotes(poll.id, index, user?.name)}
+                                                disabled={votingPolls.has(poll.id)}
+                                                style={getButtonStyles(isVoted)}
+                                            >
+
+                                                {isVoted ? `Unvote (${option.voteCount})` : `Vote (${option.voteCount})`}
+
+                                            </button>
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                     </div>
@@ -125,5 +152,11 @@ const ListOfPolls = () => {
         </div>
     );
 };
+
+const getButtonStyles = (isVoted) => ({
+    transition: 'background-color 0.3s ease',
+    backgroundColor: isVoted ? '#007bff' : '',
+    color: isVoted ? 'black' : '',
+});
 
 export default ListOfPolls;

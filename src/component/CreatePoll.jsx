@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createPoll } from '../service/PollService';
 import { usePollContext } from '../context/PollContext';
 
 const CreatePoll = () => {
-
-  const { question, setQuestion, options, setOptions, setPolls } = usePollContext(); // Add setPolls to update polls
+  const { question, setQuestion, options, setOptions, setPolls } = usePollContext();
+  const [loading, setLoading] = useState(false);
 
   const handleQuestionChange = (e) => {
     setQuestion(e.target.value);
@@ -27,24 +27,29 @@ const CreatePoll = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
+
     const pollData = {
       question,
       options: options
-        .filter(option => option.trim() !== '') // Filter out empty options
-        .map(option => ({ voteOption: option, voteCount: 0 })) // Create objects with voteOption and voteCount
+        .filter((option) => option.trim() !== '') // Filter out empty options
+        .map((option) => ({ voteOption: option, voteCount: 0 })) // Create objects with voteOption and voteCount
     };
-
 
     createPoll(pollData)
       .then((newPoll) => {
         console.log('Poll created successfully');
         setPolls((prevPolls) => [newPoll.data, ...prevPolls]);
-        setQuestion(''); 
-        setOptions(['', '']); 
+        setQuestion('');
+        setOptions(['', '']);
       })
-      .catch((err) => console.log('Error creating poll:', err));
+      .catch((err) => {
+        console.log('Error creating poll:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
-
 
   return (
     <div className="container mt-5">
@@ -84,11 +89,17 @@ const CreatePoll = () => {
             </div>
           ))}
         </div>
-        <button type="button" className="btn btn-primary me-2" onClick={handleAddOption}>
+        <button type="button" className="btn btn-success me-2" onClick={handleAddOption}>
           Add New Option
         </button>
-        <button type="submit" className="btn btn-success">
-          Create Poll
+        <button type="submit" className="btn btn-primary" disabled={loading}>
+          {loading ? (
+            <>
+            Loading...
+            <span className="spinner-border spinner-grow-sm" role="status" aria-hidden="true"></span></>
+          ) : (
+            'Create Poll'
+          )}
         </button>
       </form>
     </div>
